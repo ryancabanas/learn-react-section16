@@ -19,17 +19,31 @@ const BasicForm = (props) => {
     reset: resetLastName,
   } = useInput2((value) => value.trim() !== '');
 
+  const {
+    value: email,
+    valueIsValid: emailIsValid,
+    inputHasError: emailHasError,
+    changeHandler: emailChangeHandler,
+    blurHandler: emailBlurHandler,
+    reset: resetEmail,
+  } = useInput2((value) => {
+    const emailRegEx = /^[\w.]+[+]*[\w.]*@\w+\.\w+$/;
+    return emailRegEx.test(value.trim());
+  });
+
   const formSubmissionHandler = (event) => {
     event.preventDefault();
 
     console.log(`First Name: ${firstName}`);
     console.log(`Last Name: ${lastName}`);
+    console.log(`Email: ${email}`);
 
     resetFirstName();
     resetLastName();
+    resetEmail();
   };
 
-  const formIsValid = firstNameIsValid && lastNameIsValid;
+  const formIsValid = firstNameIsValid && lastNameIsValid && emailIsValid;
 
   const firstNameClasses = firstNameHasError
     ? 'form-control invalid'
@@ -38,6 +52,8 @@ const BasicForm = (props) => {
   const lastNameClasses = lastNameHasError
     ? 'form-control invalid'
     : 'form-control';
+
+  const emailClasses = emailHasError ? 'form-control invalid' : 'form-control';
 
   return (
     <form onSubmit={formSubmissionHandler}>
@@ -69,9 +85,18 @@ const BasicForm = (props) => {
           )}
         </div>
       </div>
-      <div className="form-control">
+      <div className={emailClasses}>
         <label htmlFor="email">E-Mail Address</label>
-        <input type="email" id="email" />
+        <input
+          type="email"
+          id="email"
+          onChange={emailChangeHandler}
+          onBlur={emailBlurHandler}
+          value={email}
+        />
+        {emailHasError && (
+          <p className="error-text">Must be valid email address</p>
+        )}
       </div>
       <div className="form-actions">
         <button disabled={!formIsValid}>Submit</button>
