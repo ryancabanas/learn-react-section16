@@ -10,15 +10,32 @@ const BasicForm = (props) => {
     reset: resetFirstName,
   } = useInput2((value) => value.trim() !== '');
 
+  const {
+    value: lastName,
+    valueIsValid: lastNameIsValid,
+    inputHasError: lastNameHasError,
+    changeHandler: lastNameChangeHandler,
+    blurHandler: lastNameBlurHandler,
+    reset: resetLastName,
+  } = useInput2((value) => value.trim() !== '');
+
   const formSubmissionHandler = (event) => {
     event.preventDefault();
+
     console.log(`First Name: ${firstName}`);
+    console.log(`Last Name: ${lastName}`);
+
     resetFirstName();
+    resetLastName();
   };
 
-  const formIsValid = firstNameIsValid;
+  const formIsValid = firstNameIsValid && lastNameIsValid;
 
   const firstNameClasses = firstNameHasError
+    ? 'form-control invalid'
+    : 'form-control';
+
+  const lastNameClasses = lastNameHasError
     ? 'form-control invalid'
     : 'form-control';
 
@@ -38,9 +55,18 @@ const BasicForm = (props) => {
             <p className="error-text">Cannot be empty, or all whitespace</p>
           )}
         </div>
-        <div className="form-control">
+        <div className={lastNameClasses}>
           <label htmlFor="last-name">Last Name</label>
-          <input type="text" id="last-name" />
+          <input
+            type="text"
+            id="last-name"
+            onChange={lastNameChangeHandler}
+            onBlur={lastNameBlurHandler}
+            value={lastName}
+          />
+          {lastNameHasError && (
+            <p className="error-text">Cannot be empty, or all whitespace</p>
+          )}
         </div>
       </div>
       <div className="form-control">
